@@ -25,4 +25,9 @@
         android:name="com.saraga.workoutapp.TrainingScheduler"
         android:label="fragment_training_scheduler"
         tools:layout="@layout/fragment_training_scheduler" />
+    <fragment
+        android:id="@+id/newsSiteFragment"
+        android:name="com.saraga.workoutapp.NewsSiteFragment"
+        android:label="fragment_news_site"
+        tools:layout="@layout/fragment_news_site" />
 </navigation>
