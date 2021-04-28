@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/sportsNews"
+        android:icon="@drawable/ic_news"
+        android:title="Sports News" />
+    <item
+        android:id="@+id/trainingTracker"
+        android:icon="@drawable/ic_running"
+        android:title="Training Tracker" />
+    <item
+        android:id="@+id/trainingHistory"
+        android:icon="@drawable/ic_date_range"
+        android:title="Training History" />
+    <item
+        android:id="@+id/trainingScheduler"
+        android:icon="@drawable/ic_schedule"
+        android:title="Training Scheduler" />
+</menu>

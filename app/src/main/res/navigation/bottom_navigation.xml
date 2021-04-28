@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_navigation"
+    app:startDestination="@id/sportsNews">
+
+    <fragment
+        android:id="@+id/sportsNews"
+        android:name="com.saraga.workoutapp.SportsNews"
+        android:label="fragment_sports_news"
+        tools:layout="@layout/fragment_sports_news" />
+    <fragment
+        android:id="@+id/trainingTracker"
+        android:name="com.saraga.workoutapp.TrainingTracker"
+        android:label="fragment_training_tracker"
+        tools:layout="@layout/fragment_training_tracker" />
+    <fragment
+        android:id="@+id/trainingHistory"
+        android:name="com.saraga.workoutapp.TrainingHistory"
+        android:label="fragment_training_history"
+        tools:layout="@layout/fragment_training_history" />
+    <fragment
+        android:id="@+id/trainingScheduler"
+        android:name="com.saraga.workoutapp.TrainingScheduler"
+        android:label="fragment_training_scheduler"
+        tools:layout="@layout/fragment_training_scheduler" />
+</navigation>
