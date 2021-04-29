@@ -13,10 +13,11 @@ import java.util.*
 
 @Database(
     entities = [Track::class],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 @TypeConverters(Converters::class)
-abstract class TrackDatabase : RoomDatabase() {
+abstract class MainDatabase : RoomDatabase() {
 
     abstract fun trackDAO(): TrackDAO
 
@@ -24,20 +25,20 @@ abstract class TrackDatabase : RoomDatabase() {
         // Singleton prevents multiple instances of database opening at the
         // same time.
         @Volatile
-        private var INSTANCE: TrackDatabase? = null
+        private var INSTANCE: MainDatabase? = null
 
         fun getDatabase(
             context: Context,
             scope: CoroutineScope
-        ): TrackDatabase {
+        ): MainDatabase {
             // if the INSTANCE is not null, then return it,
             // if it is, then create the database
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    TrackDatabase::class.java,
-                    "track_database"
-                ).addCallback(TrackDatabaseCallback(scope))
+                    MainDatabase::class.java,
+                    "main_database"
+                ).addCallback(MainDatabaseCallback(scope))
                     .build()
                 INSTANCE = instance
                 // return instance
@@ -46,7 +47,7 @@ abstract class TrackDatabase : RoomDatabase() {
         }
     }
 
-    private class TrackDatabaseCallback(
+    private class MainDatabaseCallback(
         private val scope: CoroutineScope
     ) : RoomDatabase.Callback() {
 
