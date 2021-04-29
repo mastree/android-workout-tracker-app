@@ -9,14 +9,14 @@ import java.util.*
 class Converters {
 
     @TypeConverter
-    fun toBitmap(bytes: ByteArray): Bitmap {
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+    fun toBitmap(bytes: ByteArray?): Bitmap? {
+        return bytes?.let { BitmapFactory.decodeByteArray(bytes, 0, it.size) }
     }
 
     @TypeConverter
-    fun fromBitmap(img: Bitmap): ByteArray {
+    fun fromBitmap(img: Bitmap?): ByteArray {
         val outputStream = ByteArrayOutputStream()
-        img.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        img?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
         return outputStream.toByteArray()
     }
 

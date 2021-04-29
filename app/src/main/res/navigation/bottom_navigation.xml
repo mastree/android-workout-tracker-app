@@ -5,6 +5,11 @@
     android:id="@+id/bottom_navigation"
     app:startDestination="@id/sportsNews">
 
+    <action
+        android:id="@+id/action_global_trackerfragment"
+        app:destination="@id/trainingTracker"
+        app:launchSingleTop="true" />
+
     <fragment
         android:id="@+id/sportsNews"
         android:name="com.saraga.workoutapp.sportsnews.SportsNews"

@@ -15,11 +15,18 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
 import com.google.android.material.snackbar.Snackbar
 import com.saraga.workoutapp.BuildConfig
 import com.saraga.workoutapp.R
 import com.saraga.workoutapp.MainApplication
+import com.saraga.workoutapp.services.TrackingService
+import com.saraga.workoutapp.utils.Constants.Companion.ACTION_START_OR_RESUME_SERVICE
+import com.saraga.workoutapp.utils.Constants.Companion.BACKGROUND_LOCATION_PERMISSION_INDEX
+import com.saraga.workoutapp.utils.Constants.Companion.LOCATION_PERMISSION_INDEX
+import com.saraga.workoutapp.utils.Constants.Companion.REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
+import com.saraga.workoutapp.utils.Constants.Companion.REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
+import com.saraga.workoutapp.utils.TrackingUtility.locationPermissionApproved
+import com.saraga.workoutapp.utils.TrackingUtility.runningQOrLater
 import kotlinx.android.synthetic.main.fragment_training_tracker.*
 
 class Tracker() : Fragment() {
@@ -28,8 +35,6 @@ class Tracker() : Fragment() {
     }
 
     private var map: GoogleMap? = null
-
-    private val runningQOrLater = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +54,10 @@ class Tracker() : Fragment() {
 
         mapView.getMapAsync {
             map = it
+        }
+
+        startStopButton.setOnClickListener {
+            sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
         }
     }
 
@@ -84,9 +93,16 @@ class Tracker() : Fragment() {
         mapView?.onSaveInstanceState(outState)
     }
 
+    /* TRACKING SERVICE FUNCTIONS */
+    private fun sendCommandToService(action: String) =
+        Intent(requireContext(), TrackingService::class.java).also {
+            it.action = action
+            requireContext().startService(it)
+        }
+
     /* PERMISSION FUNCTIONS */
     private fun checkPermission() {
-        if (locationPermissionApproved()) {
+        if (locationPermissionApproved(requireContext())) {
             Log.d(TAG, "Permission Granted")
         } else {
             requestLocationPermissions()
@@ -125,26 +141,9 @@ class Tracker() : Fragment() {
         }
     }
 
-    @TargetApi(29)
-    private fun locationPermissionApproved(): Boolean {
-        val foregroundLocationApproved = (
-                PackageManager.PERMISSION_GRANTED ==
-                        ContextCompat.checkSelfPermission(requireContext(),
-                                Manifest.permission.ACCESS_FINE_LOCATION))
-        val backgroundPermissionApproved =
-                if (runningQOrLater) {
-                    PackageManager.PERMISSION_GRANTED ==
-                            ContextCompat.checkSelfPermission(requireContext(),
-                                    Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                } else {
-                    true
-                }
-        return foregroundLocationApproved && backgroundPermissionApproved
-    }
-
     @TargetApi(29 )
     private fun requestLocationPermissions() {
-        if (locationPermissionApproved())
+        if (locationPermissionApproved(requireContext()))
             return
         var permissionsArray = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
         val resultCode = when {
@@ -165,9 +164,4 @@ class Tracker() : Fragment() {
     }
 }
 
-private const val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE = 33
-private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
-private const val REQUEST_TURN_DEVICE_LOCATION_ON = 29
 private const val TAG = "TrackerFragment"
-private const val LOCATION_PERMISSION_INDEX = 0
-private const val BACKGROUND_LOCATION_PERMISSION_INDEX = 1

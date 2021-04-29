@@ -9,4 +9,6 @@
         You need to grant "All time" location permission in order to use the tracker.
     </string>
     <string name="settings">Settings</string>
+    <!-- Notification Related -->
+    <string name="notification_channel_description">Nuke Run status notification</string>
 </resources>
