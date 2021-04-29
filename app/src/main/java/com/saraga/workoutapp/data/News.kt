@@ -2,7 +2,7 @@ package com.saraga.workoutapp.data
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.saraga.workoutapp.gsondata.Article
+import com.saraga.workoutapp.model.Article
 import com.saraga.workoutapp.utils.DateUtility
 import java.util.*
 

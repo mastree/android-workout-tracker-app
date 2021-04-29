@@ -1,8 +1,5 @@
-package com.saraga.workoutapp
+package com.saraga.workoutapp.sportsnews
 
-import android.app.Activity
-import android.content.Context
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +8,7 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
+import com.saraga.workoutapp.R
 
 
 class NewsSiteFragment : Fragment() {

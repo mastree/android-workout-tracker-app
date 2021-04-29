@@ -5,13 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="10dp"
-    android:layout_marginVertical="10dp">
+    android:layout_marginHorizontal="5dp"
+    android:layout_marginVertical="1dp">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cvNews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="10dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        app:cardUseCompatPadding="true"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -48,22 +53,29 @@
                 android:id="@+id/tvSourceNews"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp"
                 android:layout_marginHorizontal="5dp"
+                android:layout_marginVertical="5dp"
+                android:layout_marginBottom="4dp"
                 android:text="source: onion.com"
                 android:textSize="12sp"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
             <TextView
                 android:id="@+id/tvTitleNews"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_marginHorizontal="5dp"
-                android:layout_marginStart="4dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="4dp"
                 android:text="Ini Judul"
                 android:textColor="@color/black"
                 android:textSize="18sp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                app:layout_constraintBottom_toTopOf="@+id/tvSourceNews"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/ivImageNews"
                 app:layout_constraintTop_toBottomOf="@+id/tvDateNews" />
 

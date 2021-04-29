@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/sportsNews"
-        android:name="com.saraga.workoutapp.SportsNews"
+        android:name="com.saraga.workoutapp.sportsnews.SportsNews"
         android:label="fragment_sports_news"
         tools:layout="@layout/fragment_sports_news" />
     <fragment
@@ -27,7 +27,7 @@
         tools:layout="@layout/fragment_training_scheduler" />
     <fragment
         android:id="@+id/newsSiteFragment"
-        android:name="com.saraga.workoutapp.NewsSiteFragment"
+        android:name="com.saraga.workoutapp.sportsnews.NewsSiteFragment"
         android:label="fragment_news_site"
         tools:layout="@layout/fragment_news_site" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.saraga.workoutapp.gsondata
+package com.saraga.workoutapp.model
 
 data class Article(
     var source: Source?,
