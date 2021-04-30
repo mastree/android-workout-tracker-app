@@ -6,7 +6,9 @@ import android.os.Bundle
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.saraga.workoutapp.utils.Constants.Companion.ACTION_SHOW_AND_START_TRACKER
 import com.saraga.workoutapp.utils.Constants.Companion.ACTION_SHOW_TRACKER_FRAGMENT
+import com.saraga.workoutapp.utils.Constants.Companion.ACTION_STOP_TRACKER
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -28,8 +30,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToTrackerFragment(intent: Intent?) {
-        if (intent?.action == ACTION_SHOW_TRACKER_FRAGMENT) {
-            findNavController(R.id.fragmentMain).navigate(R.id.action_global_trackerfragment)
+        if (intent?.action == ACTION_SHOW_TRACKER_FRAGMENT || intent?.action == ACTION_SHOW_AND_START_TRACKER || intent?.action == ACTION_STOP_TRACKER) {
+            var intentRequestTrackerCode = 0
+            if (intent.action == ACTION_SHOW_AND_START_TRACKER) {
+                intentRequestTrackerCode = 1
+            } else if (intent.action == ACTION_STOP_TRACKER) {
+                intentRequestTrackerCode = 2
+            }
+
+            val bundle = Bundle()
+            bundle.putInt("intentRequestTrackerCode", intentRequestTrackerCode)
+            findNavController(R.id.fragmentMain).navigate(R.id.action_global_trackerfragment, bundle)
         }
     }
 }

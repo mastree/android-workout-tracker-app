@@ -31,6 +31,8 @@ class Constants {
         const val ACTION_START_SERVICE = "ACTION_START_SERVICE"
         const val ACTION_STOP_SERVICE = "ACTION_STOP_SERVICE"
         const val ACTION_SHOW_TRACKER_FRAGMENT = "ACTION_SHOW_TRACKER_FRAGMENT"
+        const val ACTION_SHOW_AND_START_TRACKER = "ACTION_SHOW_AND_START_TRACKER"
+        const val ACTION_STOP_TRACKER = "ACTION_STOP_TRACKER"
 
         /* Tracking Service Channel Code */
         const val NOTIFICATION_CHANNEL_ID = "tracking_channel"

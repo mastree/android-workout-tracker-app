@@ -53,6 +53,8 @@ class Tracker() : Fragment() {
         TrackerViewModelFactory((requireActivity().application as MainApplication).repository)
     }
 
+    private var intentRequestTrackerCode: Int = 0
+
     private var map: GoogleMap? = null
     private var tracking = false
     private var pathPoints = mutableListOf<Polyline>()
@@ -64,6 +66,11 @@ class Tracker() : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        arguments?.let {
+            intentRequestTrackerCode = it.getInt("intentRequestTrackerCode", 0)
+            Log.d(TAG, "Get intentRequestTrackerCode: $intentRequestTrackerCode")
+        }
     }
 
     override fun onCreateView(
@@ -101,6 +108,11 @@ class Tracker() : Fragment() {
 
         updateUiData()
         subscribeToObservers()
+        if (intentRequestTrackerCode == 1) {
+            toggleRun()
+            cyclingButton.isClickable = false
+            runningButton.isClickable = false
+        }
     }
 
     private fun addAllPolylines() {
