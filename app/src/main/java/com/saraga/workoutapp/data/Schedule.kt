@@ -51,7 +51,7 @@ class Schedule(
     }
 
     fun getNext(): Date{
-        if (justOnce) return Date(0)
+        if (justOnce) return date
 
         val listDayBool = listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
         val pos = Constants.calendarWeekdays.indexOf(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))
@@ -61,8 +61,8 @@ class Schedule(
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
-        c.set(Calendar.HOUR, beginClock.hours)
-        c.set(Calendar.MINUTE, beginClock.minutes)
+        c.set(Calendar.HOUR_OF_DAY, DateUtility.getElement(beginClock, Calendar.HOUR_OF_DAY))
+        c.set(Calendar.MINUTE, DateUtility.getElement(beginClock, Calendar.MINUTE))
 
         for (i in 0..6){
             val id = (pos + i) % 7

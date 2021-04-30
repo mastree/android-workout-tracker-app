@@ -39,5 +39,26 @@ class DateUtility {
             val temp = LocalDateTime.parse(nclock, format)
             return Date.from(temp.atZone(ZoneId.systemDefault()).toInstant())
         }
+
+        fun getHour(date: Date): Int{
+            var cal = Calendar.getInstance()
+            cal.time = date
+            return cal[Calendar.HOUR_OF_DAY]
+        }
+        fun getMinute(date: Date): Int{
+            var cal = Calendar.getInstance()
+            cal.time = date
+            return cal[Calendar.MINUTE]
+        }
+        fun getSecond(date: Date): Int{
+            var cal = Calendar.getInstance()
+            cal.time = date
+            return cal[Calendar.SECOND]
+        }
+        fun getElement(date: Date, id: Int): Int{
+            var cal = Calendar.getInstance()
+            cal.time = date
+            return cal[id]
+        }
     }
 }

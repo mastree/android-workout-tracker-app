@@ -1,11 +1,12 @@
 package com.saraga.workoutapp.scheduler
 
-import android.app.AlertDialog
-import android.app.DatePickerDialog
+import android.app.*
 import android.app.DatePickerDialog.OnDateSetListener
-import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -17,13 +18,16 @@ import android.widget.TextView
 import android.widget.ToggleButton
 import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.saraga.workoutapp.MainApplication
 import com.saraga.workoutapp.R
 import com.saraga.workoutapp.data.Schedule
+import com.saraga.workoutapp.services.AlertReceiver
 import com.saraga.workoutapp.utils.Constants
+import com.saraga.workoutapp.utils.DateUtility
 import java.util.*
 
 
@@ -140,10 +144,52 @@ class AddScheduleFragment : Fragment() {
                 target
             )
             viewModel.insert(schedule)
+//            var ccal = Calendar.getInstance()
+//            ccal.add(Calendar.SECOND, 10)
+            startAlarm(schedule)
             findNavController().popBackStack()
         }
 
         return view
+    }
+
+    private fun startAlarm(sched: Schedule) {
+        val beginDate = sched.getNext()
+        var cal = Calendar.getInstance()
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.time = beginDate
+        cal.set(
+            Calendar.HOUR_OF_DAY,
+            DateUtility.getElement(sched.beginClock, Calendar.HOUR_OF_DAY)
+        )
+        cal.set(Calendar.MINUTE, DateUtility.getElement(sched.beginClock, Calendar.MINUTE))
+
+        if (cal.before(Calendar.getInstance())) {
+            return
+        }
+        val bef = cal
+        // TODO: KASIH PESAN SURUH OLAHRAGA
+        addAlarm(cal, sched.id * 2)
+        cal.set(Calendar.HOUR_OF_DAY, DateUtility.getElement(sched.endClock, Calendar.HOUR_OF_DAY))
+        cal.set(Calendar.MINUTE, DateUtility.getElement(sched.endClock, Calendar.MINUTE))
+        if (cal.before(bef)) {
+            cal.add(Calendar.DATE, 1)
+        }
+        // TODO: KASIH PESAN PEMBERITAHUAN JADWAL SELESAI
+        addAlarm(cal, sched.id * 2 + 1)
+    }
+
+    private fun addAlarm(c: Calendar, id: Int){
+        val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager?
+        val intent = Intent(requireContext(), AlertReceiver::class.java).also{
+            it.action = id.toString()
+        }
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), id, intent, 0)
+        Log.d("Alert", c.toString())
+        alarmManager!!.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
     }
 
     private fun setupDateAndClock(view: View){
@@ -201,7 +247,7 @@ class AddScheduleFragment : Fragment() {
             }
 
         val timePickerDialog1 =
-            TimePickerDialog(context,  AlertDialog.THEME_HOLO_DARK, onTimeSetListener1, 0, 0, true)
+            TimePickerDialog(context, AlertDialog.THEME_HOLO_DARK, onTimeSetListener1, 0, 0, true)
 
         btnBeginClock.setOnClickListener {
             timePickerDialog1.setTitle("Select Time")
@@ -225,7 +271,7 @@ class AddScheduleFragment : Fragment() {
             }
 
         val timePickerDialog2 =
-            TimePickerDialog(context,  AlertDialog.THEME_HOLO_DARK, onTimeSetListener2, 0, 0, true)
+            TimePickerDialog(context, AlertDialog.THEME_HOLO_DARK, onTimeSetListener2, 0, 0, true)
 
         btnEndClock.setOnClickListener {
             timePickerDialog2.setTitle("Select Time")

@@ -1,6 +1,10 @@
 package com.saraga.workoutapp.scheduler
 
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -20,6 +24,7 @@ import com.saraga.workoutapp.R
 import com.saraga.workoutapp.data.MainDatabase
 import com.saraga.workoutapp.data.Schedule
 import com.saraga.workoutapp.repository.ScheduleRepository
+import com.saraga.workoutapp.services.AlertReceiver
 import com.saraga.workoutapp.sportsnews.NewsAdapter
 import com.saraga.workoutapp.utils.DateUtility
 import kotlinx.coroutines.CoroutineScope
@@ -48,11 +53,11 @@ class TrainingScheduler : Fragment() {
 
         val gridLayoutManager = GridLayoutManager(context, 1, GridLayoutManager.VERTICAL, false)
         mRecyclerView.layoutManager = gridLayoutManager
-        scheduleAdapter = ScheduleAdapter(listOf(), viewModel)
+        scheduleAdapter = ScheduleAdapter(listOf(), viewModel, this)
         mRecyclerView.adapter = scheduleAdapter
 
         viewModel.allSchedule.observe(viewLifecycleOwner, {
-            scheduleAdapter = ScheduleAdapter(it, viewModel)
+            scheduleAdapter = ScheduleAdapter(it, viewModel, this)
             mRecyclerView.adapter = scheduleAdapter
         })
 
@@ -62,5 +67,12 @@ class TrainingScheduler : Fragment() {
         }
 
         return view
+    }
+
+    fun cancelAlarm(id: Int) {
+        val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager?
+        val intent = Intent(requireContext(), AlertReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), id, intent, 0)
+        alarmManager!!.cancel(pendingIntent)
     }
 }

@@ -22,7 +22,8 @@ import java.lang.IllegalArgumentException
 
 class ScheduleAdapter(
         private val schedules: List<Schedule>,
-        private val viewModel: SchedulerViewModel
+        private val viewModel: SchedulerViewModel,
+        private val trainingScheduler: TrainingScheduler
 ): RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder>() {
     class ScheduleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
@@ -63,6 +64,8 @@ class ScheduleAdapter(
                     }
                     .setPositiveButton("YES") { _, _ ->
                         viewModel.delete(curSchedule)
+                        trainingScheduler.cancelAlarm(curSchedule.id * 2)
+                        trainingScheduler.cancelAlarm(curSchedule.id * 2 + 1)
                     }.create()
 
             btnDelete.setOnClickListener {
