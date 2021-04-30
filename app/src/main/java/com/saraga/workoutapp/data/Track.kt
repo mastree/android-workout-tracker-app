@@ -16,4 +16,16 @@ data class Track(
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null
+
+    fun getStart(): Date {
+        return Date(date.time - duration)
+    }
+
+    fun getEnd(): Date {
+        return date
+    }
+
+    fun isRunType(): Boolean {
+        return steps == null
+    }
 }
