@@ -60,7 +60,7 @@ abstract class MainDatabase : RoomDatabase() {
             INSTANCE?.let { database ->
                 scope.launch {
                     populateTrackDatabase(database.trackDAO())
-                    populateScheduleDatabase(database.scheduleDAO())
+//                    populateScheduleDatabase(database.scheduleDAO())
                 }
             }
         }

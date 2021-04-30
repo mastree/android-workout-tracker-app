@@ -44,6 +44,8 @@
 
             <ToggleButton
                 android:id="@+id/toggleIsRun"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginStart="32dp"

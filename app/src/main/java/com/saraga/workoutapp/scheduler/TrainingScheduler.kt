@@ -48,11 +48,11 @@ class TrainingScheduler : Fragment() {
 
         val gridLayoutManager = GridLayoutManager(context, 1, GridLayoutManager.VERTICAL, false)
         mRecyclerView.layoutManager = gridLayoutManager
-        scheduleAdapter = ScheduleAdapter(listOf())
+        scheduleAdapter = ScheduleAdapter(listOf(), viewModel)
         mRecyclerView.adapter = scheduleAdapter
 
         viewModel.allSchedule.observe(viewLifecycleOwner, {
-            scheduleAdapter = ScheduleAdapter(it)
+            scheduleAdapter = ScheduleAdapter(it, viewModel)
             mRecyclerView.adapter = scheduleAdapter
         })
 
