@@ -8,6 +8,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.saraga.workoutapp.utils.Constants.Companion.DB_NAME
 import com.saraga.workoutapp.utils.DateUtility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -15,7 +16,7 @@ import java.util.*
 
 @Database(
     entities = [Track::class, Schedule::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -40,7 +41,7 @@ abstract class MainDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     MainDatabase::class.java,
-                    "main_database"
+                    DB_NAME
                 ).addCallback(MainDatabaseCallback(scope))
                     .build()
                 INSTANCE = instance

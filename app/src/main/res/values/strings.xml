@@ -20,4 +20,5 @@
     <string name="distance_unit">m</string>
     <string name="speed_unit">km/h</string>
     <string name="steps_unit">steps</string>
+    <string name="loading">Please wait…</string>
 </resources>

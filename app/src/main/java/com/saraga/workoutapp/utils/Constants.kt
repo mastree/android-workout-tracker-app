@@ -39,6 +39,7 @@ class Constants {
         /* Tracking Service Other Constants */
         const val LOCATION_UPDATE_INTERVAL = 5000L
         const val FASTEST_LOCATION_INTERVAL = 2000L
+        const val TIMER_UPDATE_INTERVAL = 50L
 
         /* Polyline Options */
         const val POLYLINE_COLOR = Color.RED
@@ -46,5 +47,9 @@ class Constants {
 
         /* Map Camera Configurations */
         const val MAP_ZOOM = 16.5f
+        const val MIN_MAP_ZOOM = 10f
+
+        /* Conversion */
+        const val STEPS_TO_METER = 0.762f
     }
 }

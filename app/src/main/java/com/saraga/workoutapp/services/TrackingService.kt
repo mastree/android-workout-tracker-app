@@ -15,7 +15,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -32,16 +31,25 @@ import com.saraga.workoutapp.utils.Constants.Companion.LOCATION_UPDATE_INTERVAL
 import com.saraga.workoutapp.utils.Constants.Companion.NOTIFICATION_CHANNEL_ID
 import com.saraga.workoutapp.utils.Constants.Companion.NOTIFICATION_CHANNEL_NAME
 import com.saraga.workoutapp.utils.Constants.Companion.NOTIFICATION_ID
+import com.saraga.workoutapp.utils.Constants.Companion.TIMER_UPDATE_INTERVAL
+import com.saraga.workoutapp.utils.TrackingUtility.getFormattedTimestamp
 import com.saraga.workoutapp.utils.TrackingUtility.locationPermissionApproved
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 typealias Polyline = MutableList<LatLng>
 typealias Polylines = MutableList<Polyline>
 
 class TrackingService : LifecycleService() {
 
-    private var isFirstRun: Boolean = true
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val timeRunInSeconds = MutableLiveData<Long>()
+    private var timeStarted = 0L
+    private var elapsedTime = 0L
+    private var lastSecondElapsed = 0L
+    private var serviceStopped = false
 
     companion object {
         val isTracking = MutableLiveData<Boolean>()
@@ -54,10 +62,23 @@ class TrackingService : LifecycleService() {
         isTracking.postValue(false)
         pathPoints.postValue(mutableListOf())
         bearing.postValue(0f)
+        timeRunInSeconds.postValue(0L)
+        timeRunInMillis.postValue(0L)
     }
 
     private fun startTimer() {
-
+        timeStarted = System.currentTimeMillis()
+        CoroutineScope(Dispatchers.Main).launch {
+            while (isTracking.value!!) {
+                elapsedTime = System.currentTimeMillis() - timeStarted
+                timeRunInMillis.postValue(elapsedTime)
+                if (timeRunInMillis.value!! >= lastSecondElapsed + 1000L) {
+                    timeRunInSeconds.postValue(timeRunInSeconds.value!! + 1)
+                    lastSecondElapsed += 1000L
+                }
+                delay(TIMER_UPDATE_INTERVAL)
+            }
+        }
     }
 
     private fun addEmptyPolylines() = pathPoints.value?.apply {
@@ -71,7 +92,6 @@ class TrackingService : LifecycleService() {
             pathPoints.value?.apply {
                 last().add(pos)
                 pathPoints.postValue(this)
-                Log.d(TAG, "NEW LOCATION: ${location.latitude}, ${location.longitude}")
             }
         }
     }
@@ -99,6 +119,9 @@ class TrackingService : LifecycleService() {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
+            if (timeStarted == 0L) {
+                startTimer()
+            }
             if (isTracking.value!!) {
                 locationResult.locations.let { locations ->
                     for (location in locations) {
@@ -108,6 +131,13 @@ class TrackingService : LifecycleService() {
                 }
             }
         }
+    }
+
+    private fun stopService() {
+        serviceStopped = true
+        initValues()
+        stopForeground(true)
+        stopSelf()
     }
 
     override fun onCreate() {
@@ -124,16 +154,12 @@ class TrackingService : LifecycleService() {
         intent?.let {
             when(it.action) {
                 ACTION_START_SERVICE -> {
-                    if (isFirstRun) {
-                        Log.d(TAG, "Starting Service")
-                        isFirstRun = false
-                        startForegroundService()
-                    } else {
-                        Log.d(TAG, "Resuming Service")
-                    }
+                    Log.d(TAG, "Starting Service")
+                    startForegroundService()
                 }
                 ACTION_STOP_SERVICE -> {
                     Log.d(TAG, "Stopping Service")
+                    stopService()
                 }
                 else -> {
                     Log.d(TAG, "Unknown Action")
@@ -163,6 +189,20 @@ class TrackingService : LifecycleService() {
             .setContentIntent(getMainActivityPendingIntent())
 
         startForeground(NOTIFICATION_ID, notificationBuilder.build())
+
+        timeRunInSeconds.observe(this, {
+            if (!serviceStopped){
+                val timerNotificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+                    .setAutoCancel(false)
+                    .setOngoing(true)
+                    .setSmallIcon(R.drawable.ic_running)
+                    .setContentTitle("Nuke Running App")
+                    .setContentText(getFormattedTimestamp(it * 1000L))
+                    .setContentIntent(getMainActivityPendingIntent())
+
+                notificationManager.notify(NOTIFICATION_ID, timerNotificationBuilder.build())
+            }
+        })
     }
 
     private fun getMainActivityPendingIntent() = PendingIntent.getActivity(

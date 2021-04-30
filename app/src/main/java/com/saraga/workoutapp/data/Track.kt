@@ -10,7 +10,7 @@ data class Track(
     var date: Date = Date(0),
     var duration: Long = 0L,
     var distance: Int = 0,
-    var steps: Int = 0,
+    var steps: Int? = null,
     var speed: Float = 0f,
     var img: Bitmap? = null
 ) {

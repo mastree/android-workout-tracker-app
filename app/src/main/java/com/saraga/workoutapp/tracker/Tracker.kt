@@ -10,18 +10,22 @@ import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.snackbar.Snackbar
 import com.saraga.workoutapp.BuildConfig
 import com.saraga.workoutapp.MainApplication
 import com.saraga.workoutapp.R
+import com.saraga.workoutapp.data.Track
 import com.saraga.workoutapp.services.Polyline
 import com.saraga.workoutapp.services.TrackingService
 import com.saraga.workoutapp.utils.Constants.Companion.ACTION_START_SERVICE
@@ -29,13 +33,19 @@ import com.saraga.workoutapp.utils.Constants.Companion.ACTION_STOP_SERVICE
 import com.saraga.workoutapp.utils.Constants.Companion.BACKGROUND_LOCATION_PERMISSION_INDEX
 import com.saraga.workoutapp.utils.Constants.Companion.LOCATION_PERMISSION_INDEX
 import com.saraga.workoutapp.utils.Constants.Companion.MAP_ZOOM
+import com.saraga.workoutapp.utils.Constants.Companion.MIN_MAP_ZOOM
 import com.saraga.workoutapp.utils.Constants.Companion.POLYLINE_COLOR
 import com.saraga.workoutapp.utils.Constants.Companion.POLYLINE_WIDTH
 import com.saraga.workoutapp.utils.Constants.Companion.REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
 import com.saraga.workoutapp.utils.Constants.Companion.REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
+import com.saraga.workoutapp.utils.TrackingUtility.calculatePolylineDistance
+import com.saraga.workoutapp.utils.TrackingUtility.getAvgSpeed
+import com.saraga.workoutapp.utils.TrackingUtility.getFormattedTimestamp
+import com.saraga.workoutapp.utils.TrackingUtility.getStepsFromMeter
 import com.saraga.workoutapp.utils.TrackingUtility.locationPermissionApproved
 import com.saraga.workoutapp.utils.TrackingUtility.runningQOrLater
 import kotlinx.android.synthetic.main.fragment_training_tracker.*
+import java.util.*
 
 class Tracker() : Fragment() {
     private val trackViewModel: TrackerViewModel by viewModels {
@@ -46,6 +56,10 @@ class Tracker() : Fragment() {
     private var tracking = false
     private var pathPoints = mutableListOf<Polyline>()
     private var bearing = 0f
+
+    private var totalDistance = 0
+    private var totalDuration = 0L
+    private var isCycling = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +78,19 @@ class Tracker() : Fragment() {
         mapView.onCreate(savedInstanceState)
         startStopButton.setOnClickListener {
             toggleRun()
+            cyclingButton.isClickable = false
+            runningButton.isClickable = false
+        }
+        toggleTypeButton.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (isChecked) {
+                if (checkedId == R.id.cyclingButton) {
+                    stepsText.visibility = GONE
+                    isCycling = true
+                } else {
+                    stepsText.visibility = VISIBLE
+                    isCycling = false
+                }
+            }
         }
 
         mapView.getMapAsync {
@@ -71,7 +98,7 @@ class Tracker() : Fragment() {
             addAllPolylines()
         }
 
-
+        updateUiData()
         subscribeToObservers()
     }
 
@@ -106,33 +133,69 @@ class Tracker() : Fragment() {
             pathPoints = it
             addLatestPolyline()
             moveCameraToUser()
+            updateUiData()
         })
         TrackingService.bearing.observe(viewLifecycleOwner, {
             bearing = it
+        })
+        TrackingService.timeRunInMillis.observe(viewLifecycleOwner, {
+            if (it != 0L){
+                totalDuration = it
+                val curTimeInMillis = getFormattedTimestamp(it, true)
+                timerText.text = curTimeInMillis
+            }
         })
     }
 
     private fun toggleRun() {
         if (tracking){
+            startStopButton.text = getString(R.string.start)
             sendCommandToService(ACTION_STOP_SERVICE)
+            zoomOutWholeRoute()
+            saveToDb()
+            findNavController().navigate(R.id.trainingHistory) // TODO Harusnya ke listlog yang di training history
         } else {
             sendCommandToService(ACTION_START_SERVICE)
+            startStopButton.text = getString(R.string.stop)
+            timerText.text = getString(R.string.loading)
         }
     }
 
     private fun updateTracking(isTracking: Boolean) {
         tracking = isTracking
-        if (tracking) {
-            startStopButton.text = getString(R.string.stop)
-        } else {
-            startStopButton.text = getString(R.string.start)
+    }
+
+    private fun updateUiData() {
+        var distance = 0
+        for (polyline in pathPoints) {
+            distance += calculatePolylineDistance(polyline).toInt()
         }
+        totalDistance = distance
+        val speed = getAvgSpeed(totalDistance, totalDuration)
+
+        val distDisplayed = totalDistance.toString() + " " + getString(R.string.distance_unit)
+        val speedDisplayed = speed.toString() + " " + getString(R.string.speed_unit)
+        distanceText.text = distDisplayed
+        speedText.text = speedDisplayed
+        if (!isCycling) {
+            val stepsDisplayed = getStepsFromMeter(distance).toString() + " " + getString(R.string.steps_unit)
+            stepsText.text = stepsDisplayed
+        }
+    }
+
+    private fun resetTracker() {
+        tracking = false
+        pathPoints = mutableListOf()
+        bearing = 0f
+
+        totalDistance = 0
+        totalDuration = 0L
+        isCycling = false
     }
 
     private fun moveCameraToUser() {
         if (pathPoints.isNotEmpty() && pathPoints.last().isNotEmpty() && map !== null) {
-            val zoomLevel = if (map!!.cameraPosition.zoom != map!!.minZoomLevel) map!!.cameraPosition.zoom else MAP_ZOOM
-            Log.d(TAG, "Zoom Level: $zoomLevel")
+            val zoomLevel = if (map!!.cameraPosition.zoom > MIN_MAP_ZOOM) map!!.cameraPosition.zoom else MAP_ZOOM
             val position = pathPoints.last().last()
             val cameraPosition = CameraPosition.builder()
                 .target(position)
@@ -146,8 +209,44 @@ class Tracker() : Fragment() {
         }
     }
 
+    private fun zoomOutWholeRoute() {
+        val bounds = LatLngBounds.Builder()
+        for (polyline in pathPoints) {
+            for (pos in polyline) {
+                bounds.include(pos)
+            }
+        }
+        map?.moveCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                bounds.build(),
+                mapView.width,
+                mapView.height,
+                (mapView.height * 0.05f).toInt()
+            )
+        )
+    }
+
+    private fun saveToDb() {
+        map?.snapshot { img ->
+            val distance = totalDistance
+            val duration = totalDuration
+            val speed = getAvgSpeed(distance, duration)
+            val date = Date(Calendar.getInstance().timeInMillis)
+            val steps = if (!isCycling) getStepsFromMeter(distance) else null
+            val track = Track(date, duration, distance, steps, speed, img)
+            trackViewModel.insert(track)
+            Snackbar.make(
+                requireActivity().findViewById(R.id.fragmentMain),
+                "Track saved successfully!",
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
+    }
+
     override fun onStart() {
         super.onStart()
+        resetTracker()
+        updateUiData()
         mapView?.onStart()
         checkPermission()
     }
