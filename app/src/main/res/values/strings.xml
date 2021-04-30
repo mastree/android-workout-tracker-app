@@ -21,4 +21,14 @@
     <string name="speed_unit">km/h</string>
     <string name="steps_unit">steps</string>
     <string name="loading">Please wait…</string>
+
+    <!-- Tracker Viewer Fragment Strings -->
+    <string name="viewer_track_type">Track Type</string>
+    <string name="viewer_date">27/04/2021</string>
+    <string name="viewer_time">12.00 – 15.00</string>
+    <string name="viewer_map">Map Route</string>
+    <string name="viewer_dist_unit">km</string>
+    <string name="viewer_hour_unit">h</string>
+    <string name="viewer_minute_unit">m</string>
+    <string name="viewer_second_unit">s</string>
 </resources>

@@ -15,6 +15,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -133,7 +134,9 @@ class Tracker() : Fragment() {
             pathPoints = it
             addLatestPolyline()
             moveCameraToUser()
-            updateUiData()
+            if (pathPoints.isNotEmpty()){
+                updateUiData()
+            }
         })
         TrackingService.bearing.observe(viewLifecycleOwner, {
             bearing = it
@@ -153,7 +156,6 @@ class Tracker() : Fragment() {
             sendCommandToService(ACTION_STOP_SERVICE)
             zoomOutWholeRoute()
             saveToDb()
-            findNavController().navigate(R.id.trainingHistory) // TODO Harusnya ke listlog yang di training history
         } else {
             sendCommandToService(ACTION_START_SERVICE)
             startStopButton.text = getString(R.string.stop)
@@ -172,7 +174,6 @@ class Tracker() : Fragment() {
         }
         totalDistance = distance
         val speed = getAvgSpeed(totalDistance, totalDuration)
-
         val distDisplayed = totalDistance.toString() + " " + getString(R.string.distance_unit)
         val speedDisplayed = speed.toString() + " " + getString(R.string.speed_unit)
         distanceText.text = distDisplayed
@@ -234,12 +235,17 @@ class Tracker() : Fragment() {
             val date = Date(Calendar.getInstance().timeInMillis)
             val steps = if (!isCycling) getStepsFromMeter(distance) else null
             val track = Track(date, duration, distance, steps, speed, img)
-            trackViewModel.insert(track)
+            Log.d(TAG, track.toString())
             Snackbar.make(
                 requireActivity().findViewById(R.id.fragmentMain),
                 "Track saved successfully!",
                 Snackbar.LENGTH_LONG
             ).show()
+            trackViewModel.insert(track).observe(viewLifecycleOwner, {
+                val bundle = Bundle()
+                bundle.putInt("trackId", it)
+                findNavController().navigate(R.id.fragment_track_viewer, bundle)
+            })
         }
     }
 

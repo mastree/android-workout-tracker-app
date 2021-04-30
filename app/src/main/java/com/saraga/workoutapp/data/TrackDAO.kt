@@ -7,13 +7,16 @@ import androidx.room.*
 interface TrackDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(track: Track)
+    suspend fun insert(track: Track): Long
 
     @Delete
     suspend fun delete(track: Track)
 
     @Query("DELETE FROM track_table")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM track_table WHERE id=:id")
+    fun findById(id: Int): LiveData<Track>
 
     @Query("SELECT * FROM track_table ORDER BY date DESC")
     fun getAllTracksSortedByDate(): LiveData<List<Track>>

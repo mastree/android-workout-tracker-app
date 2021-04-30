@@ -10,14 +10,16 @@ class TrackRepository(private val trackDao: TrackDAO) {
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(track: Track) {
-        trackDao.insert(track)
+    suspend fun insert(track: Track): Long {
+        return trackDao.insert(track)
     }
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun delete(track: Track) {
         trackDao.delete(track)
     }
+
+    fun findById(id: Int): LiveData<Track> = trackDao.findById(id)
 
     fun getAllTracksSortedByDate(): LiveData<List<Track>> = trackDao.getAllTracksSortedByDate()
 

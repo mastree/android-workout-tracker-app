@@ -40,4 +40,9 @@
         android:name="com.saraga.workoutapp.scheduler.AddScheduleFragment"
         android:label="fragment_add_schedule"
         tools:layout="@layout/fragment_add_schedule" />
+    <fragment
+        android:id="@+id/fragment_track_viewer"
+        android:name="com.saraga.workoutapp.viewer.TrackViewer"
+        android:label="fragment_track_viewer"
+        tools:layout="@layout/fragment_track_viewer" />
 </navigation>
