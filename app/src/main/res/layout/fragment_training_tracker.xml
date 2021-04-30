@@ -38,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="4"
-                    android:text="Cycling" />
+                    android:text="@string/cycling" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="4"
-                    android:text="Running" />
+                    android:text="@string/running" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -74,7 +74,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="5"
-                    android:text="TextView"
+                    android:text="@string/distance_unit"
                     android:textAlignment="center"
                     android:textSize="18sp"
                     tools:text="0 m" />
@@ -84,7 +84,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="5"
-                    android:text="TextView"
+                    android:text="@string/speed_unit"
                     android:textAlignment="center"
                     android:textSize="18sp"
                     tools:text="0 km/h" />
@@ -94,7 +94,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="5"
-                    android:text="TextView"
+                    android:text="@string/steps_unit"
                     android:textAlignment="center"
                     android:textSize="18sp"
                     tools:text="0 steps" />
@@ -109,10 +109,9 @@
                 android:id="@+id/timerText"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="TextView"
+                android:text="00:00:00"
                 android:textAlignment="center"
-                android:textSize="36sp"
-                tools:text="00:00:00" />
+                android:textSize="36sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -131,7 +130,7 @@
                     android:layout_weight="3"
                     android:insetLeft="20dp"
                     android:insetRight="20dp"
-                    android:text="Start"
+                    android:text="@string/start"
                     app:cornerRadius="100dp" />
 
                 <Space

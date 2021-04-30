@@ -24,9 +24,8 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
 import com.saraga.workoutapp.MainActivity
 import com.saraga.workoutapp.R
-import com.saraga.workoutapp.utils.Constants.Companion.ACTION_PAUSE_SERVICE
 import com.saraga.workoutapp.utils.Constants.Companion.ACTION_SHOW_TRACKER_FRAGMENT
-import com.saraga.workoutapp.utils.Constants.Companion.ACTION_START_OR_RESUME_SERVICE
+import com.saraga.workoutapp.utils.Constants.Companion.ACTION_START_SERVICE
 import com.saraga.workoutapp.utils.Constants.Companion.ACTION_STOP_SERVICE
 import com.saraga.workoutapp.utils.Constants.Companion.FASTEST_LOCATION_INTERVAL
 import com.saraga.workoutapp.utils.Constants.Companion.LOCATION_UPDATE_INTERVAL
@@ -35,19 +34,30 @@ import com.saraga.workoutapp.utils.Constants.Companion.NOTIFICATION_CHANNEL_NAME
 import com.saraga.workoutapp.utils.Constants.Companion.NOTIFICATION_ID
 import com.saraga.workoutapp.utils.TrackingUtility.locationPermissionApproved
 
+typealias Polyline = MutableList<LatLng>
+typealias Polylines = MutableList<Polyline>
+
 class TrackingService : LifecycleService() {
 
-    var isFirstRun: Boolean = true
+    private var isFirstRun: Boolean = true
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private val timeRunInSeconds = MutableLiveData<Long>()
 
     companion object {
         val isTracking = MutableLiveData<Boolean>()
-        val pathPoints = MutableLiveData<MutableList<MutableList<LatLng>>>()
+        val pathPoints = MutableLiveData<Polylines>()
+        val bearing = MutableLiveData<Float>()
+        val timeRunInMillis = MutableLiveData<Long>()
     }
 
     private fun initValues() {
         isTracking.postValue(false)
         pathPoints.postValue(mutableListOf())
+        bearing.postValue(0f)
+    }
+
+    private fun startTimer() {
+
     }
 
     private fun addEmptyPolylines() = pathPoints.value?.apply {
@@ -86,13 +96,14 @@ class TrackingService : LifecycleService() {
         }
     }
 
-    val locationCallback = object : LocationCallback() {
+    private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
             if (isTracking.value!!) {
                 locationResult.locations.let { locations ->
                     for (location in locations) {
                         addPathPoints(location)
+                        bearing.postValue(location.bearing)
                     }
                 }
             }
@@ -104,7 +115,7 @@ class TrackingService : LifecycleService() {
         initValues()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
 
-        isTracking.observe(this, Observer {
+        isTracking.observe(this, {
             updateLocation(it)
         })
     }
@@ -112,7 +123,7 @@ class TrackingService : LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
             when(it.action) {
-                ACTION_START_OR_RESUME_SERVICE -> {
+                ACTION_START_SERVICE -> {
                     if (isFirstRun) {
                         Log.d(TAG, "Starting Service")
                         isFirstRun = false
@@ -120,9 +131,6 @@ class TrackingService : LifecycleService() {
                     } else {
                         Log.d(TAG, "Resuming Service")
                     }
-                }
-                ACTION_PAUSE_SERVICE -> {
-                    Log.d(TAG, "Pausing Service")
                 }
                 ACTION_STOP_SERVICE -> {
                     Log.d(TAG, "Stopping Service")

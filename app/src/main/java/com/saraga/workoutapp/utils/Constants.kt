@@ -1,5 +1,7 @@
 package com.saraga.workoutapp.utils
 
+import android.graphics.Color
+
 class Constants {
     companion object{
         const val BASE_URL = "https://newsapi.org"
@@ -12,8 +14,7 @@ class Constants {
         const val BACKGROUND_LOCATION_PERMISSION_INDEX = 1
 
         /* Tracker Service Action Code */
-        const val ACTION_START_OR_RESUME_SERVICE = "ACTION_START_OR_RESUME_SERVICE"
-        const val ACTION_PAUSE_SERVICE = "ACTION_PAUSE_SERVICE"
+        const val ACTION_START_SERVICE = "ACTION_START_SERVICE"
         const val ACTION_STOP_SERVICE = "ACTION_STOP_SERVICE"
         const val ACTION_SHOW_TRACKER_FRAGMENT = "ACTION_SHOW_TRACKER_FRAGMENT"
 
@@ -26,5 +27,11 @@ class Constants {
         const val LOCATION_UPDATE_INTERVAL = 5000L
         const val FASTEST_LOCATION_INTERVAL = 2000L
 
+        /* Polyline Options */
+        const val POLYLINE_COLOR = Color.RED
+        const val POLYLINE_WIDTH = 7f
+
+        /* Map Camera Configurations */
+        const val MAP_ZOOM = 16.5f
     }
 }

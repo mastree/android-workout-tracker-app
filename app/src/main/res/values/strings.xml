@@ -11,4 +11,13 @@
     <string name="settings">Settings</string>
     <!-- Notification Related -->
     <string name="notification_channel_description">Nuke Run status notification</string>
+
+    <!-- Tracking Fragment Strings -->
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="cycling">Cycling</string>
+    <string name="running">Running</string>
+    <string name="distance_unit">m</string>
+    <string name="speed_unit">km/h</string>
+    <string name="steps_unit">steps</string>
 </resources>

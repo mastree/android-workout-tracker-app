@@ -11,18 +11,26 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.snackbar.Snackbar
 import com.saraga.workoutapp.BuildConfig
-import com.saraga.workoutapp.R
 import com.saraga.workoutapp.MainApplication
+import com.saraga.workoutapp.R
+import com.saraga.workoutapp.services.Polyline
 import com.saraga.workoutapp.services.TrackingService
-import com.saraga.workoutapp.utils.Constants.Companion.ACTION_START_OR_RESUME_SERVICE
+import com.saraga.workoutapp.utils.Constants.Companion.ACTION_START_SERVICE
+import com.saraga.workoutapp.utils.Constants.Companion.ACTION_STOP_SERVICE
 import com.saraga.workoutapp.utils.Constants.Companion.BACKGROUND_LOCATION_PERMISSION_INDEX
 import com.saraga.workoutapp.utils.Constants.Companion.LOCATION_PERMISSION_INDEX
+import com.saraga.workoutapp.utils.Constants.Companion.MAP_ZOOM
+import com.saraga.workoutapp.utils.Constants.Companion.POLYLINE_COLOR
+import com.saraga.workoutapp.utils.Constants.Companion.POLYLINE_WIDTH
 import com.saraga.workoutapp.utils.Constants.Companion.REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
 import com.saraga.workoutapp.utils.Constants.Companion.REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
 import com.saraga.workoutapp.utils.TrackingUtility.locationPermissionApproved
@@ -35,6 +43,9 @@ class Tracker() : Fragment() {
     }
 
     private var map: GoogleMap? = null
+    private var tracking = false
+    private var pathPoints = mutableListOf<Polyline>()
+    private var bearing = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,13 +62,87 @@ class Tracker() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mapView.onCreate(savedInstanceState)
+        startStopButton.setOnClickListener {
+            toggleRun()
+        }
 
         mapView.getMapAsync {
             map = it
+            addAllPolylines()
         }
 
-        startStopButton.setOnClickListener {
-            sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
+
+        subscribeToObservers()
+    }
+
+    private fun addAllPolylines() {
+        for (polyline in pathPoints) {
+            val polylineOptions = PolylineOptions()
+                .color(POLYLINE_COLOR)
+                .width(POLYLINE_WIDTH)
+                .addAll(polyline)
+            map?.addPolyline(polylineOptions)
+        }
+    }
+
+    private fun addLatestPolyline() {
+        if (pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
+            val preLastLatLng = pathPoints.last()[pathPoints.last().size - 2]
+            val lastLatLng = pathPoints.last().last()
+            val polylineOptions = PolylineOptions()
+                .color(POLYLINE_COLOR)
+                .width(POLYLINE_WIDTH)
+                .add(preLastLatLng)
+                .add(lastLatLng)
+            map?.addPolyline(polylineOptions)
+        }
+    }
+
+    private fun subscribeToObservers() {
+        TrackingService.isTracking.observe(viewLifecycleOwner, {
+            updateTracking(it)
+        })
+        TrackingService.pathPoints.observe(viewLifecycleOwner, {
+            pathPoints = it
+            addLatestPolyline()
+            moveCameraToUser()
+        })
+        TrackingService.bearing.observe(viewLifecycleOwner, {
+            bearing = it
+        })
+    }
+
+    private fun toggleRun() {
+        if (tracking){
+            sendCommandToService(ACTION_STOP_SERVICE)
+        } else {
+            sendCommandToService(ACTION_START_SERVICE)
+        }
+    }
+
+    private fun updateTracking(isTracking: Boolean) {
+        tracking = isTracking
+        if (tracking) {
+            startStopButton.text = getString(R.string.stop)
+        } else {
+            startStopButton.text = getString(R.string.start)
+        }
+    }
+
+    private fun moveCameraToUser() {
+        if (pathPoints.isNotEmpty() && pathPoints.last().isNotEmpty() && map !== null) {
+            val zoomLevel = if (map!!.cameraPosition.zoom != map!!.minZoomLevel) map!!.cameraPosition.zoom else MAP_ZOOM
+            Log.d(TAG, "Zoom Level: $zoomLevel")
+            val position = pathPoints.last().last()
+            val cameraPosition = CameraPosition.builder()
+                .target(position)
+                .bearing(bearing)
+                .zoom(zoomLevel)
+                .build()
+            map!!.animateCamera(
+                CameraUpdateFactory.newCameraPosition(cameraPosition),
+                null
+            )
         }
     }
 
@@ -110,9 +195,9 @@ class Tracker() : Fragment() {
     }
 
     override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<out String>,
-            grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
     ) {
         Log.d(TAG, "onRequestPermissionResult")
 
@@ -124,9 +209,9 @@ class Tracker() : Fragment() {
                         PackageManager.PERMISSION_DENIED))
         {
             Snackbar.make(
-                    requireActivity().findViewById(R.id.fragmentMain),
-                    R.string.permission_denied_explanation,
-                    5 * 1000 // 5 seconds
+                requireActivity().findViewById(R.id.fragmentMain),
+                R.string.permission_denied_explanation,
+                5 * 1000 // 5 seconds
             )
                     .setAction(R.string.settings) {
                         startActivity(Intent().apply {
@@ -141,7 +226,7 @@ class Tracker() : Fragment() {
         }
     }
 
-    @TargetApi(29 )
+    @TargetApi(29)
     private fun requestLocationPermissions() {
         if (locationPermissionApproved(requireContext()))
             return
@@ -158,8 +243,8 @@ class Tracker() : Fragment() {
             }
         }
         requestPermissions(
-                permissionsArray,
-                resultCode
+            permissionsArray,
+            resultCode
         )
     }
 }
