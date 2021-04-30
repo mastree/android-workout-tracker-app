@@ -26,6 +26,6 @@ data class Track(
     }
 
     fun isRunType(): Boolean {
-        return steps == null
+        return steps != null
     }
 }
