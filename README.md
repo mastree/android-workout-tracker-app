@@ -15,27 +15,24 @@ Sebuah aplikasi android untuk menunjang aktivitas workout sesorang dengan spesif
 
 ## Cara Kerja Aplikasi
 ### Sport News
-1. Melakukan getAll berita yang ada di database
-2. Kemudian disimpan ke dalam CardView menggunakan NewsAdapter
-3. Setelah itu kelas CardView dimasukan ke dalam ViewRecycle
-4. Jika jika dari CardView diklik maka akan menampilkan berita menggunakan WebView
+1. Melakukan request data berita menggunakan Indonesia Sports News API
+2. Data yang direquest di-bind menggunakan MVVM sehingga NewsAdapter bisa di-update
+3. Pada setiap data diberikan onClickListener untuk membuka website pada fragment baru
+4. Pada menu utamanya juga diberikan kondisi apabila layarnya landscape (ketika landscape spanCount-nya 2)
 ### Training Tracker
-1. Menampilkan halaman start tracking dengan pilihan aktivitas dan stop atau start
-2. Jika diklik start maka tracking akan dimulai dan akan melakukan subscribe ke observer untuk mendapatkan lokasi perangkat
-3. Setelah kondisi tidak sedang tracking maka hasil tracking tersebut akan disimpan ke dalam database
-4. Kemudian menampilkan halaman TrackerViewer dengan menampilkan hasil tracking terbaru
+1. Menampilkan halaman start tracking dengan pilihan aktivitas dan Start
+2. Jika diklik start maka tracking akan dimulai dan akan melakukan permintaan lokasi untuk melakukan tracking
+3. Setelah tracking selesai maka hasil tracking tersebut akan disimpan ke dalam database
+4. Kemudian hasilnya akan ditampilkan pada halaman TrackerViewer
 ### Training History
-1. Menampilkan halaman fragment_training_history untuk menampilkan calendar dan pick date yang akan dicek
-2. Date akan dipassing ke fragment_history_list dan dimasukan ke TextView
-3. Gunakan Date untuk mencari ke tracker database apakah ada data sesuai tanggal tersebut
-4. Kemudian masukan instance hasil query ke adapter untuk menghasilkan kelas grid_history
-5. Masukan grid_history ke recycleview
-6. Berdasarkan jika diklik grid tersebut maka hasil tracking akan ditampilkan pada TrackerViewer 
+1. Menampilkan fragment Training History untuk menampilkan calendar dan pick date yang akan dicek
+2. Date akan dipassing ke fragment berikutnya dan digunakan sebagai kondisi history yang akan ditampilkan
+3. Apabila salah satu history di-klik, maka aplikasi akan membuka tracker viewer untuk history yang bersangkutan
 ### Traning Scheduler
-1. Menampilkan halaman TrainingScheduler
-2. Disana terdapat button untuk delete dan tambah
-3. Jika tampbah maka akan dinavigasikan ke tampilan AddScheduleFragment
-4. Setelah itu data akan dimasukan ke database ke database dan ke tampilan TrainingSchedule
+1. Menampilkan fragment Training Scheduler
+2. Data schedule di-bind menggunakan MVVM
+3. Jika menekan tombol floating action button, aplikasi akan membuka fragment add schedule
+5. Data yang ditambahkan akan langsung di-update ke database dan dibuatkan alarm
 
 ## Library dan Justifikasinya
 1. Picasso: untuk melakukan download gambar dari link eksternal dan menyimpan image tersebut
@@ -90,5 +87,3 @@ Sebuah aplikasi android untuk menunjang aktivitas workout sesorang dengan spesif
 2. Init Database, TrackerDAO dan Main Application
 3  Integrasi Maps SDK Android Google
 4. Tracker Viewer Fragment
-
-Tugas Besar 3 IF3210 Workout App pada platform Android menggunakan Kotlin
