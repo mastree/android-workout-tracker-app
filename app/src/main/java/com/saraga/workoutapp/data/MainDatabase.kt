@@ -15,7 +15,7 @@ import java.util.*
 
 @Database(
     entities = [Track::class, Schedule::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -42,7 +42,8 @@ abstract class MainDatabase : RoomDatabase() {
                     MainDatabase::class.java,
                     "main_database"
                 ).addCallback(MainDatabaseCallback(scope))
-                    .build()
+                        .fallbackToDestructiveMigration()
+                        .build()
                 INSTANCE = instance
                 // return instance
                 instance

@@ -6,6 +6,7 @@ import android.graphics.Color
 class Constants {
     companion object{
         const val BASE_URL = "https://newsapi.org"
+        const val STEP_TO_METER =  0.762
         val weekdays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
         val calendarWeekdays = listOf(Calendar.MONDAY, Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY, Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY)
         val dayToCalendarDay = mapOf<String, Int>(
