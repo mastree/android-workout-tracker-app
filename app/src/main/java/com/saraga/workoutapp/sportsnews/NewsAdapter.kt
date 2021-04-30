@@ -8,9 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.saraga.workoutapp.R
 import com.saraga.workoutapp.data.News
@@ -18,8 +16,8 @@ import com.squareup.picasso.Picasso
 import java.lang.IllegalArgumentException
 
 class NewsAdapter(
-    private val newslist: List<News>,
-    private val context: Context
+        private val newslist: List<News>,
+        private val context: Context
 ): RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
     class NewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 

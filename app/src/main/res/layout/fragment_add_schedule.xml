@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".scheduler.AddScheduleFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvNewSchedule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="New Schedule"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="30dp"
+                android:text="Training Type:"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvNewSchedule" />
+
+            <ToggleButton
+                android:id="@+id/toggleIsRun"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/toggle_training_type"
+                android:checked="true"
+                android:text="ToggleButton"
+                android:textOff=""
+                android:textOn=""
+                app:layout_constraintStart_toEndOf="@+id/tvType"
+                app:layout_constraintTop_toBottomOf="@+id/tvNewSchedule" />
+
+            <CheckBox
+                android:id="@+id/cboxJustOnce"
+                android:layout_width="212dp"
+                android:layout_height="47dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:text="Just Once"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toggleIsRun" />
+
+            <LinearLayout
+                android:id="@+id/layoutContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="24dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/tvTimeRange"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cboxJustOnce">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clJustOnce"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tvPickDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:text="Select Date"
+                        android:textColor="@color/black"
+                        android:textSize="24sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnDateSchedule"
+                        style="?android:spinnerStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="32dp"
+                        android:text="JAN 01 2021"
+                        android:textSize="30sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvPickDate" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clNotJustOnce"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tvPickDays"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:text="Select Days"
+                        android:textColor="@color/black"
+                        android:textSize="24sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvPickDays">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <ToggleButton
+                                android:id="@+id/toggleMon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_day"
+                                android:textColor="@color/white"
+                                android:textOff="MON"
+                                android:textOn="MON"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ToggleButton
+                                android:id="@+id/toggleTue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_day"
+                                android:textColor="@color/white"
+                                android:textOff="TUE"
+                                android:textOn="TUE"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toEndOf="@+id/toggleMon"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ToggleButton
+                                android:id="@+id/toggleWed"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_day"
+                                android:textColor="@color/white"
+                                android:textOff="WED"
+                                android:textOn="WED"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toEndOf="@+id/toggleTue"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ToggleButton
+                                android:id="@+id/toggleThu"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_day"
+                                android:textColor="@color/white"
+                                android:textOff="THU"
+                                android:textOn="THU"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toEndOf="@+id/toggleWed"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ToggleButton
+                                android:id="@+id/toggleFri"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_day"
+                                android:textColor="@color/white"
+                                android:textOff="FRI"
+                                android:textOn="FRI"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toEndOf="@+id/toggleThu"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ToggleButton
+                                android:id="@+id/toggleSat"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_day"
+                                android:textColor="@color/white"
+                                android:textOff="SAT"
+                                android:textOn="SAT"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toEndOf="@+id/toggleFri"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ToggleButton
+                                android:id="@+id/toggleSun"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_day"
+                                android:textColor="@color/white"
+                                android:textOff="SUN"
+                                android:textOn="SUN"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toEndOf="@+id/toggleSat"
+                                app:layout_constraintTop_toTopOf="parent" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </HorizontalScrollView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCreate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/round_bg"
+                android:backgroundTint="@color/palette_green"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="create"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/btnCancel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="40dp"
+                android:background="@drawable/round_bg"
+                android:backgroundTint="@color/palette_red"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="cancel"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tvTimeRange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="24dp"
+                android:text="Time Range"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toTopOf="@+id/btnBeginClock"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layoutContainer" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnBeginClock"
+                style="?android:spinnerStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginBottom="24dp"
+                android:text="START"
+                android:textSize="30sp"
+                app:layout_constraintBottom_toTopOf="@+id/btnCreate"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tvTimeTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:text="TO"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/btnBeginClock"
+                app:layout_constraintEnd_toStartOf="@+id/btnEndClock"
+                app:layout_constraintStart_toEndOf="@+id/btnBeginClock"
+                app:layout_constraintTop_toTopOf="@+id/btnBeginClock" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnEndClock"
+                style="?android:spinnerStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="24dp"
+                android:text="END"
+                android:textSize="30sp"
+                app:layout_constraintBottom_toTopOf="@+id/btnCreate"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

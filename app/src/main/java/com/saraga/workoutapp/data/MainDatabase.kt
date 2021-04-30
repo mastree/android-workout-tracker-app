@@ -1,43 +1,48 @@
 package com.saraga.workoutapp.data
 
 import android.content.Context
-import android.util.Log
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.saraga.workoutapp.utils.DateUtility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.*
 
 @Database(
-    entities = [Track::class],
+    entities = [Track::class, Schedule::class],
     version = 1
 )
 @TypeConverters(Converters::class)
-abstract class TrackDatabase : RoomDatabase() {
+abstract class MainDatabase : RoomDatabase() {
 
     abstract fun trackDAO(): TrackDAO
+    abstract fun scheduleDAO(): ScheduleDAO
 
     companion object {
         // Singleton prevents multiple instances of database opening at the
         // same time.
         @Volatile
-        private var INSTANCE: TrackDatabase? = null
+        private var INSTANCE: MainDatabase? = null
 
         fun getDatabase(
             context: Context,
             scope: CoroutineScope
-        ): TrackDatabase {
+        ): MainDatabase {
             // if the INSTANCE is not null, then return it,
             // if it is, then create the database
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    TrackDatabase::class.java,
+                    MainDatabase::class.java,
                     "track_database"
                 ).addCallback(TrackDatabaseCallback(scope))
+                    .addCallback(ScheduleDatabaseCallback(scope))
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 // return instance
@@ -82,6 +87,35 @@ abstract class TrackDatabase : RoomDatabase() {
                 null // gaada image
             )
             trackDao.insert(track)
+        }
+    }
+
+    private class ScheduleDatabaseCallback(
+        private val scope: CoroutineScope
+    ) : RoomDatabase.Callback() {
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun onCreate(db: SupportSQLiteDatabase) {
+            super.onCreate(db)
+            INSTANCE?.let { database ->
+                scope.launch {
+                    populateDatabase(database.scheduleDAO())
+                }
+            }
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        suspend fun populateDatabase(scheduleDAO: ScheduleDAO) {
+            // Delete all content here.
+            scheduleDAO.deleteAll()
+
+            // Add sample tracks.
+            var schedule = Schedule(0, true,false, Date(0), true, false, false, false, false, false, false, DateUtility.getDateFromClock("15:00:00"), DateUtility.getDateFromClock("17:00:00"))
+            scheduleDAO.insert(schedule)
+            schedule = Schedule(0, false,false, Date(0), false, true, false, false, false, false, false, Calendar.getInstance().time, Calendar.getInstance().time)
+            scheduleDAO.insert(schedule)
+            schedule = Schedule(0, true,false, Date(0), false, true, false, true, false, false, false, Calendar.getInstance().time, Calendar.getInstance().time)
+            scheduleDAO.insert(schedule)
         }
     }
 }

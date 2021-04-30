@@ -22,7 +22,7 @@
         tools:layout="@layout/fragment_training_history" />
     <fragment
         android:id="@+id/trainingScheduler"
-        android:name="com.saraga.workoutapp.TrainingScheduler"
+        android:name="com.saraga.workoutapp.scheduler.TrainingScheduler"
         android:label="fragment_training_scheduler"
         tools:layout="@layout/fragment_training_scheduler" />
     <fragment
@@ -30,4 +30,9 @@
         android:name="com.saraga.workoutapp.sportsnews.NewsSiteFragment"
         android:label="fragment_news_site"
         tools:layout="@layout/fragment_news_site" />
+    <fragment
+        android:id="@+id/addScheduleFragment"
+        android:name="com.saraga.workoutapp.scheduler.AddScheduleFragment"
+        android:label="fragment_add_schedule"
+        tools:layout="@layout/fragment_add_schedule" />
 </navigation>
