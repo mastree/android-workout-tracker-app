@@ -82,6 +82,30 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/tvTargetText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Target:"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toTopOf="@+id/tvDaySchedule"
+            app:layout_constraintLeft_toRightOf="@+id/ivImageSchedule"
+            app:layout_constraintTop_toBottomOf="@+id/tvTimeMarkSchedule" />
+
+        <TextView
+            android:id="@+id/tvTargetSchedule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="2000 steps"
+            app:layout_constraintBottom_toTopOf="@+id/tvDaySchedule"
+            app:layout_constraintLeft_toRightOf="@+id/tvTargetText"
+            app:layout_constraintTop_toBottomOf="@+id/tvTimeMarkSchedule" />
+
+
+        <TextView
             android:id="@+id/tvDaySchedule"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

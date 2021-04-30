@@ -21,7 +21,8 @@ class Schedule(
     var saturday: Boolean = false,
     var sunday: Boolean = false,
     var beginClock: Date = Date(0),
-    var endClock: Date = Date(0)
+    var endClock: Date = Date(0),
+    var target: Double = 1.0 // in meters
 ){
     fun getActiveDay(): String{
         var ret: String = ""

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.saraga.workoutapp.R
 import com.saraga.workoutapp.data.Schedule
 import com.saraga.workoutapp.sportsnews.NewsAdapter
+import com.saraga.workoutapp.utils.Constants
 import com.saraga.workoutapp.utils.DateUtility
 import com.squareup.picasso.Picasso
 import java.lang.IllegalArgumentException
@@ -42,8 +43,14 @@ class ScheduleAdapter(
             val tvEnd = findViewById<TextView>(R.id.tvEndClockSchedule)
             val tvDay = findViewById<TextView>(R.id.tvDaySchedule)
             val btnDelete = findViewById<AppCompatButton>(R.id.btnDeleteSchedule)
+            val tvTarget = findViewById<TextView>(R.id.tvTargetSchedule)
 
-            if (!curSchedule.isRun) ivImage.setImageResource(R.drawable.ic_biking)
+            if (!curSchedule.isRun){
+                ivImage.setImageResource(R.drawable.ic_biking)
+                tvTarget.text = (curSchedule.target / 1000).toString() + " KM"
+            } else{
+                tvTarget.text = (curSchedule.target / Constants.STEP_TO_METER).toString() + " Steps"
+            }
             tvStart.text = DateUtility.getClockString(curSchedule.beginClock) //curSchedule.beginClock.hours.toString() + ":" + curSchedule.beginClock.minutes.toString() + ":" + curSchedule.beginClock.seconds.toString()
             tvEnd.text = DateUtility.getClockString(curSchedule.endClock) //curSchedule.endClock.hours.toString() + ":" + curSchedule.endClock.minutes.toString() + ":" + curSchedule.endClock.seconds.toString()
             tvDay.text = curSchedule.getActiveDay()

@@ -12,6 +12,8 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.ToggleButton
 import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -21,6 +23,7 @@ import androidx.navigation.fragment.findNavController
 import com.saraga.workoutapp.MainApplication
 import com.saraga.workoutapp.R
 import com.saraga.workoutapp.data.Schedule
+import com.saraga.workoutapp.utils.Constants
 import java.util.*
 
 
@@ -31,9 +34,9 @@ class AddScheduleFragment : Fragment() {
     private lateinit var btnBeginClock: AppCompatButton
     private lateinit var btnEndClock: AppCompatButton
 
-    private var day = 1
-    private var month = 1
-    private var year = 1
+    private var day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+    private var month = Calendar.getInstance().get(Calendar.MONTH) + 1
+    private var year = Calendar.getInstance().get(Calendar.YEAR)
 
     private var hour1 = 0
     private var minute1 = 0
@@ -74,8 +77,18 @@ class AddScheduleFragment : Fragment() {
         val btnBeginClock = view.findViewById<AppCompatButton>(R.id.btnBeginClock)
         val btnEndClock = view.findViewById<AppCompatButton>(R.id.btnEndClock)
 
+        val tvTarget = view.findViewById<TextView>(R.id.tvTarget)
+        val etTarget = view.findViewById<EditText>(R.id.etTarget)
         val btnCreate = view.findViewById<AppCompatButton>(R.id.btnCreate)
         val btnCancel = view.findViewById<AppCompatButton>(R.id.btnCancel)
+
+        toggleIsRun.setOnClickListener {
+            if (toggleIsRun.isChecked){
+                tvTarget.text = "TargetTraining Target (how many steps)"
+            } else{
+                tvTarget.text = "Training Target (in kilometers)"
+            }
+        }
 
         cboxJustOnce.setOnClickListener {
             if (cboxJustOnce.isChecked){
@@ -103,6 +116,13 @@ class AddScheduleFragment : Fragment() {
             endClock.set(0, 0, 0, hour2, minute2)
             endClock.clear(Calendar.SECOND)
 
+            var target = etTarget.text.toString().toDouble()
+            if (toggleIsRun.isChecked){
+                target *= Constants.STEP_TO_METER
+            } else{
+                target *= 1000
+            }
+
             val schedule = Schedule(
                 0,
                 toggleIsRun.isChecked,
@@ -116,7 +136,8 @@ class AddScheduleFragment : Fragment() {
                 tSat.isChecked,
                 tSun.isChecked,
                 beginClock.time,
-                endClock.time
+                endClock.time,
+                target
             )
             viewModel.insert(schedule)
             findNavController().popBackStack()

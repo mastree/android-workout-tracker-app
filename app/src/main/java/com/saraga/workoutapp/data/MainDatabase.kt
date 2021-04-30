@@ -43,7 +43,8 @@ abstract class MainDatabase : RoomDatabase() {
                     MainDatabase::class.java,
                     DB_NAME
                 ).addCallback(MainDatabaseCallback(scope))
-                    .build()
+                        .fallbackToDestructiveMigration()
+                        .build()
                 INSTANCE = instance
                 // return instance
                 instance
