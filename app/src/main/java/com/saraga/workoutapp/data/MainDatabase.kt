@@ -15,7 +15,8 @@ import java.util.*
 
 @Database(
     entities = [Track::class, Schedule::class],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class MainDatabase : RoomDatabase() {
@@ -39,10 +40,8 @@ abstract class MainDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     MainDatabase::class.java,
-                    "track_database"
-                ).addCallback(TrackDatabaseCallback(scope))
-                    .addCallback(ScheduleDatabaseCallback(scope))
-                    .fallbackToDestructiveMigration()
+                    "main_database"
+                ).addCallback(MainDatabaseCallback(scope))
                     .build()
                 INSTANCE = instance
                 // return instance
@@ -51,20 +50,22 @@ abstract class MainDatabase : RoomDatabase() {
         }
     }
 
-    private class TrackDatabaseCallback(
+    private class MainDatabaseCallback(
         private val scope: CoroutineScope
     ) : RoomDatabase.Callback() {
 
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
             INSTANCE?.let { database ->
                 scope.launch {
-                    populateDatabase(database.trackDAO())
+                    populateTrackDatabase(database.trackDAO())
+                    populateScheduleDatabase(database.scheduleDAO())
                 }
             }
         }
 
-        suspend fun populateDatabase(trackDao: TrackDAO) {
+        suspend fun populateTrackDatabase(trackDao: TrackDAO) {
             // Delete all content here.
             trackDao.deleteAll()
 
@@ -88,24 +89,9 @@ abstract class MainDatabase : RoomDatabase() {
             )
             trackDao.insert(track)
         }
-    }
-
-    private class ScheduleDatabaseCallback(
-        private val scope: CoroutineScope
-    ) : RoomDatabase.Callback() {
 
         @RequiresApi(Build.VERSION_CODES.O)
-        override fun onCreate(db: SupportSQLiteDatabase) {
-            super.onCreate(db)
-            INSTANCE?.let { database ->
-                scope.launch {
-                    populateDatabase(database.scheduleDAO())
-                }
-            }
-        }
-
-        @RequiresApi(Build.VERSION_CODES.O)
-        suspend fun populateDatabase(scheduleDAO: ScheduleDAO) {
+        suspend fun populateScheduleDatabase(scheduleDAO: ScheduleDAO) {
             // Delete all content here.
             scheduleDAO.deleteAll()
 

@@ -16,14 +16,14 @@ interface TrackDAO {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM track_table ORDER BY date DESC")
-    fun getAllRunsSortedByDate(): LiveData<List<Track>>
+    fun getAllTracksSortedByDate(): LiveData<List<Track>>
 
     @Query("SELECT * FROM track_table ORDER BY duration DESC")
-    fun getAllRunsSortedByDuration(): LiveData<List<Track>>
+    fun getAllTracksSortedByDuration(): LiveData<List<Track>>
 
     @Query("SELECT * FROM track_table ORDER BY speed DESC")
-    fun getAllRunsSortedBySpeed(): LiveData<List<Track>>
+    fun getAllTracksSortedBySpeed(): LiveData<List<Track>>
 
     @Query("SELECT * FROM track_table ORDER BY distance DESC")
-    fun getAllRunsSortedByDistance(): LiveData<List<Track>>
+    fun getAllTracksSortedByDistance(): LiveData<List<Track>>
 }
