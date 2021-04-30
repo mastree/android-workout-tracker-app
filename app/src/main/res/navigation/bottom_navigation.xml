@@ -22,7 +22,7 @@
         tools:layout="@layout/fragment_training_tracker" />
     <fragment
         android:id="@+id/trainingHistory"
-        android:name="com.saraga.workoutapp.TrainingHistory"
+        android:name="com.saraga.workoutapp.history.TrainingHistory"
         android:label="fragment_training_history"
         tools:layout="@layout/fragment_training_history" />
     <fragment
