@@ -29,4 +29,7 @@ interface TrackDAO {
 
     @Query("SELECT * FROM track_table ORDER BY distance DESC")
     fun getAllTracksSortedByDistance(): LiveData<List<Track>>
+
+    @Query("SELECT * FROM track_table WHERE :lbound <= (date - duration) AND (date - duration) < :rbound")
+    fun getAllTracksBoundedByDate(lbound: Long, rbound: Long): LiveData<List<Track>>
 }

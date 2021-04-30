@@ -6,27 +6,44 @@
     android:layout_height="match_parent"
     tools:context=".history.TrainingHistory">
 
-    <!-- TODO: Update blank fragment layout -->
+
     <TextView
-        android:layout_width="194dp"
-        android:layout_height="65dp"
-        android:text="Training History"
+        android:id="@+id/tvCalenderPick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Pick Date:"
+        android:textColor="@color/black"
+        android:textStyle="bold"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.04" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="407dp"
-        android:layout_height="614dp"
-        tools:layout_editor_absoluteY="117dp">
+    <CalendarView
+        android:id="@+id/calHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCalenderPick" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnPickCalenderHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="OPEN TRAINING HISTORY"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:background="@drawable/round_bg"
+        android:backgroundTint="@color/palette_yellow"
+        android:textColor="@color/white"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:paddingHorizontal="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calHistory" />
 </androidx.constraintlayout.widget.ConstraintLayout>

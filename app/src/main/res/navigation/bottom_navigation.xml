@@ -45,4 +45,9 @@
         android:name="com.saraga.workoutapp.viewer.TrackViewer"
         android:label="fragment_track_viewer"
         tools:layout="@layout/fragment_track_viewer" />
+    <fragment
+        android:id="@+id/historyListFragment"
+        android:name="com.saraga.workoutapp.history.HistoryListFragment"
+        android:label="fragment_history_list"
+        tools:layout="@layout/fragment_history_list" />
 </navigation>

@@ -44,4 +44,33 @@ class Schedule(
         }
         return ret
     }
+
+    fun nextExist(): Boolean{
+        if (justOnce) return false
+        return true
+    }
+
+    fun getNext(): Date{
+        if (justOnce) return Date(0)
+
+        val listDayBool = listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+        val pos = Constants.calendarWeekdays.indexOf(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))
+
+        var c = Calendar.getInstance()
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        c.set(Calendar.HOUR, beginClock.hours)
+        c.set(Calendar.MINUTE, beginClock.minutes)
+
+        for (i in 0..6){
+            val id = (pos + i) % 7
+            if (listDayBool[id]){
+                if (!c.before(Calendar.getInstance())) return c.time
+                c.add(Calendar.DATE, 1)
+            }
+        }
+        return Date(0)
+    }
 }

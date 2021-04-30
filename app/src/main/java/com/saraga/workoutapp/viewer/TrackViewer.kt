@@ -79,10 +79,10 @@ class TrackViewer : Fragment() {
             val stepsText = TrackingUtility.getStepsFromMeter(track.distance).toString() + " " + getString(R.string.steps_unit)
             tvViewerSteps.text = stepsText
             tvViewerSteps.visibility = VISIBLE
-            ivViewerType.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_running, null))
+            ivViewerType.setImageResource(R.drawable.ic_running)
         } else {
             tvViewerSteps.visibility = GONE
-            ivViewerType.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_biking, null))
+            ivViewerType.setImageResource(R.drawable.ic_biking)
         }
     }
 }

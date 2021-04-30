@@ -28,4 +28,6 @@ class TrackRepository(private val trackDao: TrackDAO) {
     fun getAllTracksSortedBySpeed(): LiveData<List<Track>> = trackDao.getAllTracksSortedBySpeed()
 
     fun getAllTracksSortedByDistance(): LiveData<List<Track>> = trackDao.getAllTracksSortedByDistance()
+
+    fun getAllTracksBoundedByDate(lbound: Long, rbound: Long): LiveData<List<Track>> = trackDao.getAllTracksBoundedByDate(lbound, rbound)
 }
